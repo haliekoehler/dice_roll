@@ -12,6 +12,10 @@
     align-content: center;
 }
 
+.RollDice-settings {
+    align-content:;
+}
+
 /* Styling rolldice button */
 .RollDice button {
     width: 15em;

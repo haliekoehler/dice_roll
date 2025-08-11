@@ -8,35 +8,47 @@ class RollDice extends Component {
     // Face numbers passes as default props
     static defaultProps = {
         sides: ['one', 'two', 'three',
-            'four', 'five', 'six']
+            'four', 'five', 'six'],
+        numDice: 2 //number of dice to role
     }
     constructor(props) {
         super(props)
 
         // States
         this.state = {
-            die1: 'one',
-            die2: 'one',
-            rolling: false
+            //use array to allow dynamic # of die
+            dice: Array.from({length: this.props.numDice }, () => 'one'),
+            rolling: false,
+            numDice: this.props.numDice // controlled by user input
         }
         this.roll = this.roll.bind(this)
+        this.handleChange = this.handleChange.bind(this)
     }
+
+    handleChange(e) {
+        const value = parseInt(e.target.value)
+        this.setState({ numDice: isNaN(value) ? 0 : value })
+    }
+
+    updateDiceCount() {
+        const { numDice } = this.state
+        const newDice = Array.from({ length: numDice }, () => 'one')
+        this.setState({ dice: newDice })
+    }
+
     roll() {
         const { sides } = this.props
+        const { numDice } = this.state
+        this.setState({rolling: true})
+
         setTimeout(() => {
+            const newDice = Array.from({ length: numDice }, () =>
+                sides[Math.floor(Math.random() * sides.length)]
+            )
             this.setState({
-
-                // Changing state upon click
-                die1: sides[(Math.floor(Math.random() * sides.length))],
-                die2: sides[(Math.floor(Math.random() * sides.length))],
-                rolling: true
+                dice: newDice,
+                rolling: false                
             })
-
-            // Start timer of one sec when rolling start
-
-
-            // Set rolling to false again when time over
-            this.setState({ rolling: false })
         }, 1000)
     }
 
@@ -46,15 +58,28 @@ class RollDice extends Component {
         const { die1, die2, rolling } = this.state
         return (
             <div className='RollDice'>
+                <div className='RollDice-settings'>
+                    <input
+                        type='number'
+                        min='1'
+                        value={this.state.numDice}
+                        onChange={this.handleChange}
+                    />
+                    <button onClick={this.updateDiceCount}>
+                        Set Number of Dice
+                    </button>
+                </div>
                 <div className='RollDice-container'>
-                    <Die face={die1} rolling={rolling} />
-                    <Die face={die2} rolling={rolling} />
+                    {this.state.dice.map((face, idx) => (
+                        <Die key={idx} face={face} rolling={this.state.rolling} />
+                    ))}
                 </div>
                 <button className={handleBtn}
                     disabled={this.state.rolling}
                     onClick={this.roll}>
                     {this.state.rolling ? 'Rolling' : 'Roll Dice!'}
                 </button>
+                
             </div>
         )
     }
