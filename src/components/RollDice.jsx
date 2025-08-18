@@ -1,63 +1,72 @@
-// RollDice.js File
-import React, { Component } from 'react'
+// RollDice.js
+import React, { useState, useEffect } from 'react'
 import './RollDice.css'
 import Die from './Die'
 
-class RollDice extends Component {
+const RollDice = ({ sides = ['one', 'two', 'three', 'four', 'five', 'six'], numDice: defaultNumDice = 2 }) => {
+    const [numDice, setNumDice] = useState(defaultNumDice)
+    const [dice, setDice] = useState(Array.from({ length: defaultNumDice }, () => 'one'))
+    const [rolling, setRolling] = useState(false)
 
-    // Face numbers passes as default props
-    static defaultProps = {
-        sides: ['one', 'two', 'three',
-            'four', 'five', 'six']
-    }
-    constructor(props) {
-        super(props)
+    useEffect(() => {
+        setDice(Array.from({ length: numDice }, () => 'one'))
+    }, [numDice])
 
-        // States
-        this.state = {
-            die1: 'one',
-            die2: 'one',
-            rolling: false
-        }
-        this.roll = this.roll.bind(this)
+    const handleChange = (e) => {
+        const value = parseInt(e.target.value)
+        setNumDice(isNaN(value) ? 0 : value)
     }
-    roll() {
-        const { sides } = this.props
+
+    const roll = () => {
+        setRolling(true)
         setTimeout(() => {
-            this.setState({
-
-                // Changing state upon click
-                die1: sides[(Math.floor(Math.random() * sides.length))],
-                die2: sides[(Math.floor(Math.random() * sides.length))],
-                rolling: true
-            })
-
-            // Start timer of one sec when rolling start
-
-
-            // Set rolling to false again when time over
-            this.setState({ rolling: false })
+            const newDice = Array.from({ length: numDice }, () =>
+                sides[Math.floor(Math.random() * sides.length)]
+            )
+            setDice(newDice)
+            setRolling(false)
         }, 1000)
     }
 
-    render() {
-        const handleBtn = this.state.rolling ?
-            'RollDice-rolling' : ''
-        const { die1, die2, rolling } = this.state
-        return (
-            <div className='RollDice'>
-                <div className='RollDice-container'>
-                    <Die face={die1} rolling={rolling} />
-                    <Die face={die2} rolling={rolling} />
+    return (
+        <div className='RollDice'>
+            <h1>Dice Roller!</h1>
+            <div>
+                <div>
+                    <div className='RollDice-settings'>
+                        <label htmlFor="numberOfDie">Number of Die:</label>
+                        <input
+                            id="numberOfDie"
+                            type='number'
+                            min='1'
+                            value={numDice}
+                            onChange={handleChange}
+                        />
+                        <button
+                        className={rolling ? 'RollDice-rolling' : ''}
+                        disabled={rolling}
+                        onClick={roll}
+                        >
+                            {rolling ? 'Rolling' : 'Roll Dice!'}
+                        </button>
+                    <div className='RollDice-results'>
+                        <h2>Results:</h2>
+                        <ul>
+                            {dice.map((face, idx) => (
+                                <li key={idx}>Die {idx + 1}: {face}</li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
-                <button className={handleBtn}
-                    disabled={this.state.rolling}
-                    onClick={this.roll}>
-                    {this.state.rolling ? 'Rolling' : 'Roll Dice!'}
-                </button>
             </div>
-        )
-    }
+                <div className='RollDice-container'>
+                    {dice.map((face, idx) => (
+                        <Die key={idx} face={face} rolling={rolling} />
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default RollDice

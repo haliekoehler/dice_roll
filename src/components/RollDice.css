@@ -5,11 +5,22 @@
     min-height: 100vh;
 }
 
+.RollDice > div {
+    display: flex;
+    flex-direction: row;
+}
+
 /* Shows each dice in one row */
 .RollDice-container {
     display: flex;
     justify-content: center;
     align-content: center;
+    flex-wrap: wrap;
+}
+
+.RollDice-settings {
+    display: flex:;
+    flex-direction: column;
 }
 
 /* Styling rolldice button */
