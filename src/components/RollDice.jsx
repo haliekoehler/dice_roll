@@ -30,26 +30,41 @@ const RollDice = ({ sides = ['one', 'two', 'three', 'four', 'five', 'six'], numD
 
     return (
         <div className='RollDice'>
-            <div className='RollDice-settings'>
-                <input
-                    type='number'
-                    min='1'
-                    value={numDice}
-                    onChange={handleChange}
-                />
+            <h1>Dice Roller!</h1>
+            <div>
+                <div>
+                    <div className='RollDice-settings'>
+                        <label htmlFor="numberOfDie">Number of Die:</label>
+                        <input
+                            id="numberOfDie"
+                            type='number'
+                            min='1'
+                            value={numDice}
+                            onChange={handleChange}
+                        />
+                        <button
+                        className={rolling ? 'RollDice-rolling' : ''}
+                        disabled={rolling}
+                        onClick={roll}
+                        >
+                            {rolling ? 'Rolling' : 'Roll Dice!'}
+                        </button>
+                    <div className='RollDice-results'>
+                        <h2>Results:</h2>
+                        <ul>
+                            {dice.map((face, idx) => (
+                                <li key={idx}>Die {idx + 1}: {face}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div className='RollDice-container'>
-                {dice.map((face, idx) => (
-                    <Die key={idx} face={face} rolling={rolling} />
-                ))}
+                <div className='RollDice-container'>
+                    {dice.map((face, idx) => (
+                        <Die key={idx} face={face} rolling={rolling} />
+                    ))}
+                </div>
             </div>
-            <button
-                className={rolling ? 'RollDice-rolling' : ''}
-                disabled={rolling}
-                onClick={roll}
-            >
-                {rolling ? 'Rolling' : 'Roll Dice!'}
-            </button>
         </div>
     )
 }
